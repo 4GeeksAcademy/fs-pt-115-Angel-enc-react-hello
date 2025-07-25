@@ -5,7 +5,7 @@ const Home = () => {
     const [tarea, setTarea] = useState([]);
     const [nuevaTarea, setNuevaTarea] = useState("");
     const username = "Angel";
-
+    //Crea un usuario si no existe
     const crearUsuario = async () => {
         try {
             const response = await fetch(`https://playground.4geeks.com/todo/users/${username}`, {
@@ -19,7 +19,7 @@ const Home = () => {
                 getTareas();
             } else {
                 const data = await response.json();
-                console.log("Error al crear usuario:", data.msg);
+                console.log("Error al crear usuario:", data);
             }
         } catch (error) {
             console.log("Error al crear el usuario", error);
@@ -32,9 +32,6 @@ const Home = () => {
             if (response.ok) {
                 const data = await response.json();
                 setTarea(data.todos || []);
-            } else if (response.status === 404) {
-                console.log("Usuario no existe, creando...");
-                await crearUsuario();
             } else {
                 console.log("Error al obtener tareas");
             }
@@ -70,11 +67,11 @@ const Home = () => {
     };
 
     const borrarTarea = async (index) => {
-        const tareaAEliminar = tarea[index];
-        if (!tareaAEliminar?.id) return;
+        const eliminarTarea = tarea[index];
+        if (!eliminarTarea?.id) return;
 
         try {
-            const response = await fetch(`https://playground.4geeks.com/todo/todos/${tareaAEliminar.id}`, {
+            const response = await fetch(`https://playground.4geeks.com/todo/todos/${eliminarTarea.id}`, {
                 method: "DELETE"
             });
 
@@ -90,8 +87,8 @@ const Home = () => {
 
     const limpiarTodas = async () => {
         try {
-            const deletes = tarea.map((t) =>
-                fetch(`https://playground.4geeks.com/todo/todos/${t.id}`, {
+            const deletes = tarea.map((g) =>
+                fetch(`https://playground.4geeks.com/todo/todos/${g.id}`, {
                     method: "DELETE"
                 })
             );
@@ -123,9 +120,9 @@ const Home = () => {
                 {Array.isArray(tarea) && tarea.length === 0 ? (
                     <li className="list-group-item text-muted">No hay tareas</li>
                 ) : (
-                    tarea.map((t, i) => (
+                    tarea.map((g, i) => (
                         <li key={i} className="list-group-item d-flex justify-content-between align-items-center tarea-item">
-                            {t.label}
+                            {g.label}
                             <span onClick={() => borrarTarea(i)} style={{ cursor: "pointer" }}>
                                 <i className="fa-solid fa-trash"></i>
                             </span>
@@ -139,7 +136,7 @@ const Home = () => {
                     <>
                         <p className="text-muted">{tarea.length} tarea{tarea.length > 1 ? "s" : ""} restantes</p>
                         <button className="btn btn-danger btn-sm" onClick={limpiarTodas}>
-                            Borrar todas
+                            Borrar tareas
                         </button>
                     </>
                 )}
